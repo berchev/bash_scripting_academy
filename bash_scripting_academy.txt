@@ -4,6 +4,13 @@
 .bashrc -> if you set VAR in .bashrc - Start new bash shell instance -> bash command and you will have your VAR loaded!
   export VAR=/usr/local/bin
 
+
+The difference between .bash_profile and .bashrc is if there is a login.
+Login means usually a user there and an interactive session.
+When there is no login? When you run scripts for example, in cron or a program
+So .bashrc will setup the enviroronment mostly used by programs and no user
+.bash_profile to setup the session *for* the user
+
 ---------------------------------------------------------  .bash_history ---------------------------------------------------------
 env | grep HISTCONTROL
 HISTCONTROL=ignoredups:ignorespace -> ignore duplicate commands + command started with space
@@ -18,7 +25,7 @@ You can define here the last thing that happens when logout is issued.
 Can restores user's profile information durring logout, if we have made some changes
 
 -------------------------------------
-bash_profile
+.bash_profile
 PATH=$PATH:$HOME/bin
 export PATH
 ----------------------------------------
@@ -79,9 +86,9 @@ It will break the execution after "rm doodles.sh" line
 
 you need to put spaces between digits and the aritmetic sign
 
-gberchev@BerchevPC bash_scripting_academy $ echo `expr 2 \* 4 `------------------------
+gberchev@BerchevPC bash_scripting_academy $ echo `expr 2 \* 4 `
 8
-gberchev@BerchevPC bash_scripting_academy $ expr \( 2 + 2 \) \*------------------------
+gberchev@BerchevPC bash_scripting_academy $ expr \( 2 + 2 \) \*4
 16
 
 
@@ -113,9 +120,7 @@ echo "Enter your first name: "
 read FIRSTNAME
 echo "Enter your last name"
 read LASTNAME
-------------------------
-------------------------
-------------------------
+
 
 echo "In 10 years from now you will be `USERAGE + 10` years old"
 
@@ -125,11 +130,6 @@ Variables are considered from bash perspective to be implicitly(Безуслов
 
 There is a time when we need to explicitly(изрично) define variable type. In this way we can prevent us from catching information type we not expacting.
 
-------------------------
-------------------------
-------------------------
-------------------------
-------------------------
 gberchev@BerchevPC bash_scripting_academy $ echo `expr $MYVAR + 5`set -e
 9
 gberchev@BerchevPC bash_scripting_academy $ 
@@ -140,8 +140,6 @@ declare -- MYVAR="4"
 
 In the reality MYVAR is "string" not "integer" like we suspected!
 But it is an implicit type variable. We can calculate it because of implicit conversion from string to integer.
-
-
 
 gberchev@BerchevPC bash_scripting_academy $ MYVAR="Name"
 gberchev@BerchevPC bash_scripting_academy $ echo "`expr MYVAR + 5`"
@@ -158,10 +156,8 @@ declare -i NEWVAR="10"
 gberchev@BerchevPC bash_scripting_academy $ 
 gberchev@BerchevPC bash_scripting_academy $ NEWVAR="something"
 gberchev@BerchevPC bash_scripting_academy $ echo $NEWVAR 
-0------------------------
-g------------------------
+0
 
-I------------------------
 gberchev@BerchevPC bash_scripting_academy $ NEWVAR=111
 gberchev@BerchevPC bash_scripting_academy $ echo $NEWVAR 
 111
@@ -191,6 +187,35 @@ There is anoter way to declare variable as readonly:
 gberchev@BerchevPC bash_scripting_academy $ readonly MYREADONLY="This string"      
 gberchev@BerchevPC bash_scripting_academy $ declare -p MYREADONLY 
 declare -r MYREADONLY="This string"
+
+------------------------------------ Arrays --------------------------------------------------------------------------------
+MYARRAY=("First" "Second" "Third")
+echo $MYARRAY
+First
+
+If you echo your array it will point you to the ZERO Index of the array. If you want to print the second value do the following:
+echo ${MYARRAY[1]}. 
+You can print everything frm the array:
+echo ${MYARRAY[*]}
+
+We can assighn index to the array:
+MYARRAY[3]="Fourth"
+
+IMPORTANT: Do not put "," between different indexes, otherwise it will be accepted as one index
+
+
+${MYARRAY[@]} -> @ is special character for the array, which tells you to go through each elements in the array.
+
+#!/usr/bin/env bash
+
+SERVERLIST=("websrv01" "websrv02" "websrv03" "websrv04")
+COUNT=0
+
+for INDEX in ${SERVERLIST[@]}; do
+  echo "Processing Server: ${SERVER[COUNT]}"
+  COUNT="`expr $COUNT + 1`"
+done
+
 
 
 
