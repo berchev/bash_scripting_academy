@@ -1,0 +1,200 @@
+
+-------------------------------------------------.bash_profile and .bashrc -------------------------------------------------------
+.bash_profile -> design to execute when you login
+.bashrc -> if you set VAR in .bashrc - Start new bash shell instance -> bash command and you will have your VAR loaded!
+  export VAR=/usr/local/bin
+
+---------------------------------------------------------  .bash_history ---------------------------------------------------------
+env | grep HISTCONTROL
+HISTCONTROL=ignoredups:ignorespace -> ignore duplicate commands + command started with space
+export HISTCONTROL=$HISTCONTROL:ignorespace
+
+HISTCONTROL=ignoreboth
+
+This can be set in .bashrc file!
+------------------------------------------------------------ .bash_logout ------------------------------------------------------
+.bash_logout
+You can define here the last thing that happens when logout is issued.
+Can restores user's profile information durring logout, if we have made some changes
+
+-------------------------------------
+bash_profile
+PATH=$PATH:$HOME/bin
+export PATH
+----------------------------------------
+Bash script opens a shell and then execute commands in that shell independently from user shell
+----------------------------------------
+FIRSTNAME="Terry"
+env| grep Terry -> it cannot be found
+export FIRSTNAME -> then you will be able to find it in env
+
+We can combine the steps to assign variable and then exporting variable to 1 step:
+export VAR="content"
+
+export TODAYSDATE=`date` it will assign value of the current date, but if you type again $TODAYSDATE it will not assign a new time value
+it do not re-assign value automaticaly. You need to export it every single time before call the variable
+
+---------------------------------------   ALIASES   ---------------------------------------------------------------------------------
+#!/usr/bin/env bash
+
+shopt -s expand_aliases
+
+TODAYSDATE=`date`
+USERFILES=`find /home -user user`
+
+echo "Today's date: $TODAYSDATE"
+echo "All files owned by USER: $USERFILES"
+
+A=`TODAY`
+B=`UFILES`
+
+echo "With Alias. TODAY is: $A"
+echo "With Alias, UFILES is $B"
+
+By default alises are not expand in subshell. When we create alias we declare it on .bash_profile or .bashrc and in this way the alias is valid for the current shell we logged in.
+Aliases are not expanded by default to subshells that are started as part of our bash script.
+We can fix that:
+shopt -s expand_aliases
+shopt led us to the builds in commands in bash shell
+
+------------------------------------------------  set -e  -----------------------------------------------------------------
+set -e 
+It's going to tell my script STOP execution when it meet error. 
+
+#!/usr/bin/env bash
+set -e
+
+expr 1 + 5
+echo $?
+
+rm doodles.sh #this file is missing
+echo $?
+
+expr 10 + 10
+echo $?
+
+It will break the execution after "rm doodles.sh" line
+
+------------------------------------------------------- Aritmethic operations -----------------------------------------------------------
+
+you need to put spaces between digits and the aritmetic sign
+
+gberchev@BerchevPC bash_scripting_academy $ echo `expr 2 \* 4 `------------------------
+8
+gberchev@BerchevPC bash_scripting_academy $ expr \( 2 + 2 \) \*------------------------
+16
+
+
+---------------------------------------------- global environment variables and local env variables -----------------------------------
+
+global environment variables and local env variables
+printenv and env -> global env variables
+
+If you want to know variables local to the current shell (to the session we are currently using)-> set
+
+---------------------------------------- Special characthers and escapes   ---------------------------------------------------------
+Special characthers and escapes
+echo "\$COL" -> bachslash calls to "echo" to ignore the meaning
+$COL
+
+echo '\$COL' -> single quotes represents all characters literraly (escape their special meaning)
+$COL
+
+echo "\\"
+\
+
+echo "\""
+"
+---------------------------------------------------------------------------------------------------------------------
+#!/usr/bin/env bash
+
+The read statement 
+echo "Enter your first name: "
+read FIRSTNAME
+echo "Enter your last name"
+read LASTNAME
+------------------------
+------------------------
+------------------------
+
+echo "In 10 years from now you will be `USERAGE + 10` years old"
+
+----------------------------------------------------- Types of variables --------------------------------------------------------------
+  
+Variables are considered from bash perspective to be implicitly(Безусловно) declared. In other words - all you have to do is to give it a name and value. Value will implicitly determin the type of variable.
+
+There is a time when we need to explicitly(изрично) define variable type. In this way we can prevent us from catching information type we not expacting.
+
+------------------------
+------------------------
+------------------------
+------------------------
+------------------------
+gberchev@BerchevPC bash_scripting_academy $ echo `expr $MYVAR + 5`set -e
+9
+gberchev@BerchevPC bash_scripting_academy $ 
+
+We can use declare -p in order to see the value and the type of that particular variable:
+declare -p MYVAR
+declare -- MYVAR="4"
+
+In the reality MYVAR is "string" not "integer" like we suspected!
+But it is an implicit type variable. We can calculate it because of implicit conversion from string to integer.
+
+
+
+gberchev@BerchevPC bash_scripting_academy $ MYVAR="Name"
+gberchev@BerchevPC bash_scripting_academy $ echo "`expr MYVAR + 5`"
+expr: non-integer argument
+gberchev@BerchevPC bash_scripting_academy $ 
+
+In the example above system tries to convert MYVAR to what is expacted as part of the expression or function, and if is not able it will show an error.
+
+We can declare a variable as integer and then this variable will be able to take only integer value. If you try to assign "string" value, then will be converted to ZERO!
+
+gberchev@BerchevPC bash_scripting_academy $ declare -i NEWVAR=10
+gberchev@BerchevPC bash_scripting_academy $ declare -p NEWVAR 
+declare -i NEWVAR="10"
+gberchev@BerchevPC bash_scripting_academy $ 
+gberchev@BerchevPC bash_scripting_academy $ NEWVAR="something"
+gberchev@BerchevPC bash_scripting_academy $ echo $NEWVAR 
+0------------------------
+g------------------------
+
+I------------------------
+gberchev@BerchevPC bash_scripting_academy $ NEWVAR=111
+gberchev@BerchevPC bash_scripting_academy $ echo $NEWVAR 
+111
+gberchev@BerchevPC bash_scripting_academy $
+ 
+If we need to assign string to NEWVAR we can do the following:
+gberchev@BerchevPC bash_scripting_academy $ declare +i NEWVAR 
+
+Then if we check, we will find out that there is no explicit indication what that variable can contain. So we can assign a string value now!!
+gberchev@BerchevPC bash_scripting_academy $ declare -p NEWVAR 
+declare -- NEWVAR="111"
+gberchev@BerchevPC bash_scripting_academy $ NEWVAR="something"
+gberchev@BerchevPC bash_scripting_academy $ echo $NEWVAR 
+something
+gberchev@BerchevPC bash_scripting_academy $
+
+We also can declare variable as read only:
+gberchev@BerchevPC bash_scripting_academy $ declare -r READONLY="This is string we cannot overwrite"
+gberchev@BerchevPC bash_scripting_academy $ declare -p READONLY 
+declare -r READONLY="This is string we cannot overwrite"
+gberchev@BerchevPC bash_scripting_academy $ 
+gberchev@BerchevPC bash_scripting_academy $ READONLY="New Value"
+bash: READONLY: readonly variable
+gberchev@BerchevPC bash_scripting_academy $ 
+
+There is anoter way to declare variable as readonly:
+gberchev@BerchevPC bash_scripting_academy $ readonly MYREADONLY="This string"      
+gberchev@BerchevPC bash_scripting_academy $ declare -p MYREADONLY 
+declare -r MYREADONLY="This string"
+
+
+
+
+
+
+====================================== TASKS FOR PRACTICE =========================================================================
