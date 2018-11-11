@@ -216,7 +216,131 @@ for INDEX in ${SERVERLIST[@]}; do
   COUNT="`expr $COUNT + 1`"
 done
 
+-------------------------------------Passing Variables to Scripts at the Command Line---------------------------------------
+#!/usr/bin/env bash
 
+echo "the following item was passed in to the script at run time $1"
+
+If we execute the script like this we will got:
+  the following item was passed in to the script at run time 
+
+but we can execute the script in this way:
+./script.sh "hello world" and the output will be:
+the following item was passed in to the script at run time hello world
+
+you can add another:
+echo "the following item was passed in to the script at run time $1 $2"
+
+USERNAME=$1
+PASSWORD=$2
+echo "The following Username is $USERNAME and Password is $PASSWORD"
+
+script.sh Username Password123
+output:
+The following Username is Username and Password is Password123
+
+----------------------------------------------------if stement -------------------------------------------------------------------
+echo "Guess the secret number"
+echo "======================="
+echo ""
+echo "Enter a number between 1 and 5:"
+read GUESS
+
+if [ $GUESS -eq 3]
+  then
+    echo "You guessed the correct number"
+----------------------------------------------------
+test for existing file (-a or -e or -f will test for the existance of regular file)
+
+#!/usr/bin/env bash
+
+FILENAME="mytext.txt"
+echo "Testing fo the existence of a file called $FILENAME"
+
+if [ -a $FILENAME ]
+  then
+    echo "File  $FILENAME does exist"
+fi   
+
+We can test for NON-existence with ! - if file does not exist
+if [ ! -a $FILENAME ]
+
+we can test for more than 1 things. (if file exists and it is readable)
+if [ -f $FILENAME ] && [ -r $FILENAME ]
+---------------------------------------------- if/else ----------------------------------------
+
+#!/usr/bin/env bash
+
+echo "Enter a number between 1 to 3"
+read NUMBER
+
+if [ "$NUMBER" -eq "1" ] 2>/dev/null || [ "$NUMBER" -eq "2" ] 2>/dev/null || [ "$NUMBER" -eq "3" ] 2>/dev/null; then
+  echo "You enter $NUMBER"
+else
+  echo "You didn't follow the instructions"
+
+-------------------------------------------------------------------
+#!/usr/bin/env bash
+
+echo "Enter a number between 1 to 3"
+read NUMBER
+
+if [ "$NUMBER" -eq "1" ] 2>/dev/null; then
+  echo "you entered #1"
+elif [ "$NUMBER" -eq "2" ] 2>/dev/null; then
+  echo "you successfully entered #2"
+elif [ "$NUMBER" -eq "3" ] 2>/dev/null; then
+  echo "You entered 3rd number"
+else
+  echo "You didn't follow the instructions"
+fi
+
+---------------------------------------- for loop -----------------------------------------
+for is assuming it is going to loop through number of times that is variable
+echo "List all scripts"
+
+SHELLSCRIPTS=`ls *.sh`
+
+for SCRIPT in $SHELLSCRIPTS; do
+  DISPLAY="cat $SCRIPT"
+  echo "File: $SCRIPT - content $DISPLAY"
+done
+
+---------------------------------------- case statement -----------------------------------
+echo "Main menu"
+echo "1) Choose one"
+echo "2) Choose two"
+echo "3) Choose three"
+echo ""
+echo "Enter choice"
+read CHOICE
+
+case $CHOICE in
+  1)
+    echo "You choose 1";;
+  2)
+    echo "You choose 2";;
+  3)
+    echo "You choose 3";;
+  *)
+    echo "You choose unwisely";;
+esac
+
+;; is mandatory in the end of every choice
+
+---------------------------------------------- while loop ------------------------------------------------------------------
+Sometimes you want to pre-determin - how many times you want to loop through a particular piece of code or commands in your shell script run.
+
+echo "Enter a number of times you want to dispaly 'hello world' message"
+read DISPLAYNUMBER
+
+COUNT=1
+
+while [ $COUNT -le $DISPALYNUMBER ]
+do
+  echo "Hello World"
+  COUNT="`expr $COUNT + 1`"
+done
 
 
 
