@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+
+echo "Starting the function definition... "
+
+funcExample () {
+  echo "We are now inside the function..."
+}
+
+funcExample
